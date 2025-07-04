@@ -1,15 +1,81 @@
-/**
- * Clock 컴포넌트
- *
- * 실시간 시계를 표시하고 사용자가 시계를 시작하거나 정지할 수 있는 React 함수형 컴포넌트입니다.
- * 시간은 "시", "분", "초"로 나뉘어 표시됩니다.
- *
- * 주요 기능:
- * - 현재 시간을 "HH:mm:ss" 형식으로 표시합니다.
- * - 시계가 실행 중일 때 매초마다 시간을 업데이트합니다.
- **/
+import { useEffect, useState } from 'react';
+import './App.css';
+
 function Clock() {
-  return <div className="timer-container"></div>;
+  const containerStyled = {
+    background: '#DBE2EF',
+    padding: '2rem',
+  };
+  const spanStyled = {
+    display: 'inline-block',
+    background: 'white',
+    borderRadius: '20%',
+    width: '2rem',
+    textAlign: 'center',
+    margin: '0.2rem',
+  };
+  const buttonStyled = {
+    font: 'inherit',
+    background: '#112D4E',
+    color: 'white',
+    padding: '1rem',
+    borderRadius: '1rem',
+    border: 'none',
+    outline: 'none',
+    cursor: 'pointer',
+  };
+
+  const formatDate = (date) => {
+    const pad = (n) => n.toString().padStart(2, '0');
+
+    const year = String(date.getFullYear()).slice(2);
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hour = pad(date.getHours());
+    const minute = pad(date.getMinutes());
+    const second = pad(date.getSeconds());
+
+    return `${year}${month}${day}${hour}${minute}${second}`;
+  };
+
+  const [curTime, setCurTime] = useState(formatDate(new Date()));
+  const [isRunning, setIsRunning] = useState(true);
+
+  useEffect(() => {
+    let intervalId;
+    if (isRunning) {
+      intervalId = setInterval(() => {
+        setCurTime(formatDate(new Date()));
+      }, 1000);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [isRunning]);
+
+  const handleToggle = () => {
+    setIsRunning(!isRunning);
+  };
+
+  return (
+    <div style={containerStyled}>
+      <div>
+        <h1>
+          {<span style={spanStyled}>{curTime[0]}</span>}
+          {<span style={spanStyled}>{curTime[1]}</span>}년{<span style={spanStyled}>{curTime[2]}</span>}
+          {<span style={spanStyled}>{curTime[3]}</span>}월{<span style={spanStyled}>{curTime[4]}</span>}
+          {<span style={spanStyled}>{curTime[5]}</span>}일{<span style={spanStyled}>{curTime[6]}</span>}
+          {<span style={spanStyled}>{curTime[7]}</span>}시{<span style={spanStyled}>{curTime[8]}</span>}
+          {<span style={spanStyled}>{curTime[9]}</span>}분{<span style={spanStyled}>{curTime[10]}</span>}
+          {<span style={spanStyled}>{curTime[11]}</span>}초
+        </h1>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <button style={buttonStyled} onClick={handleToggle}>
+          {isRunning ? '타이머 정지' : '타이머 시작'}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default Clock;
